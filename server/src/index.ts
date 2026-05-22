@@ -3,6 +3,7 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { env } from "./lib/env.js";
+import { registerSocketHandlers } from "./sockets/registerSocketHandlers.js";
 
 const app = express();
 
@@ -18,6 +19,8 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log("Usuario conectado:", socket.id);
+
+  registerSocketHandlers(io, socket);
 
   socket.on("disconnect", () => {
     console.log("Usuario desconectado:", socket.id);
