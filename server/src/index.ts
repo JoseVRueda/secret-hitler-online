@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { env } from "./lib/env.js";
 
 const app = express();
 
@@ -11,7 +12,7 @@ const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: env.clientUrl,
   },
 });
 
@@ -23,6 +24,6 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3001, () => {
-  console.log("Servidor corriendo en puerto 3001");
+server.listen(env.serverPort, () => {
+  console.log(`Servidor corriendo en el puerto ${env.serverPort}`);
 });
