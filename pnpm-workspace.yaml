@@ -1,0 +1,13 @@
+packages:
+  - client
+  - server
+  - packages/*
+
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver
+
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
