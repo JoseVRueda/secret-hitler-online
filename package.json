@@ -2,8 +2,8 @@
   "name": "secret-hitler-online",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter client dev & pnpm --filter server dev",
-    "build": "pnpm --filter client build & pnpm --filter server build",
-    "start": "pnpm --filter client start & pnpm --filter server start"
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r --parallel build",
+    "start": "pnpm -r --parallel start"
   }
 }
