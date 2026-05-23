@@ -1,12 +1,21 @@
 import { socket } from "@/lib/socket";
 import { useRoomStore } from "@/store/useRoomStore";
+import type { Room } from "@/types/room";
 
 export function registerRoomSocketEvents() {
-  socket.on("room-updated", (room) => {
+  const onRoomUpdated = (room: Room) => {
     useRoomStore.getState().setRoom(room);
-  });
+  };
 
-  socket.on("error-message", (message) => {
+  const onErrorMessage = (message: string) => {
     alert(message);
-  });
+  };
+
+  socket.on("room-updated", onRoomUpdated);
+  socket.on("error-message", onErrorMessage);
+
+  return () => {
+    socket.off("room-updated", onRoomUpdated);
+    socket.off("error-message", onErrorMessage);
+  };
 }

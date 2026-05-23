@@ -11,9 +11,7 @@ export default function Home() {
 
   const room = useRoomStore((s) => s.room);
 
-  useEffect(() => {
-    registerRoomSocketEvents();
-  }, []);
+  useEffect(() => registerRoomSocketEvents(), []);
 
   if (room) {
     return (
