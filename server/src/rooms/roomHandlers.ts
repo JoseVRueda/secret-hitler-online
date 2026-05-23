@@ -1,7 +1,7 @@
 import { generateRoomCode } from "@/utils/generateRoomCode.js";
 import { Server, Socket } from "socket.io";
 import { rooms } from "./roomStore.js";
-import type { Room } from "./roomTypes.js";
+import type { Room } from "@secret-hitler/shared";
 
 export function handleCreateRoom(io: Server, socket: Socket, nickname: string) {
   const code = generateRoomCode();

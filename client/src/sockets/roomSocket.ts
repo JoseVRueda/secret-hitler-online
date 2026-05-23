@@ -1,6 +1,6 @@
 import { socket } from "@/lib/socket";
 import { useRoomStore } from "@/store/useRoomStore";
-import type { Room } from "@/types/room";
+import type { Room } from "@secret-hitler/shared";
 
 export function registerRoomSocketEvents() {
   const onRoomUpdated = (room: Room) => {
