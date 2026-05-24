@@ -20,7 +20,8 @@
     "@secret-hitler/shared": "workspace:*",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "socket.io": "^4.8.3"
+    "socket.io": "^4.8.3",
+    "xstate": "^5.31.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
