@@ -1,3 +1,7 @@
+import type {
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from "@secret-hitler/shared";
 import cors from "cors";
 import express from "express";
 import { createServer } from "http";
@@ -8,6 +12,10 @@ import { registerSocketHandlers } from "./sockets/registerSocketHandlers.js";
 const app = express();
 
 app.use(cors({ origin: env.clientUrl }));
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "Server is running" });
+});
 
 const server = createServer(app);
 
