@@ -8,6 +8,7 @@ export type JoinRoomPayload = {
 export type ClientToServerEvents = {
   "create-room": (nickname: string) => void;
   "join-room": (data: JoinRoomPayload) => void;
+  "start-game": (code: string) => void;
 };
 
 export type ServerToClientEvents = {

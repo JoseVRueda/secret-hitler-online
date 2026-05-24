@@ -1,4 +1,8 @@
-import { handleCreateRoom, handleJoinRoom } from "@/rooms/roomHandlers.js";
+import {
+  handleCreateRoom,
+  handleJoinRoom,
+  handleStartGame,
+} from "@/rooms/roomHandlers.js";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -15,5 +19,9 @@ export function registerSocketHandlers(
 
   socket.on("join-room", (data) => {
     handleJoinRoom(io, socket, data);
+  });
+
+  socket.on("start-game", (code: string) => {
+    handleStartGame(io, socket, code);
   });
 }
