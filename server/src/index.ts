@@ -7,11 +7,11 @@ import { registerSocketHandlers } from "./sockets/registerSocketHandlers.js";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: env.clientUrl }));
 
 const server = createServer(app);
 
-const io = new Server(server, {
+const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
   cors: {
     origin: env.clientUrl,
   },

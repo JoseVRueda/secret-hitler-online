@@ -1,9 +1,18 @@
 import { generateRoomCode } from "@/utils/generateRoomCode.js";
+import type {
+  ClientToServerEvents,
+  JoinRoomPayload,
+  Room,
+  ServerToClientEvents,
+} from "@secret-hitler/shared";
 import { Server, Socket } from "socket.io";
 import { rooms } from "./roomStore.js";
-import type { Room } from "@secret-hitler/shared";
 
-export function handleCreateRoom(io: Server, socket: Socket, nickname: string) {
+export function handleCreateRoom(
+  io: Server<ClientToServerEvents, ServerToClientEvents>,
+  socket: Socket<ClientToServerEvents, ServerToClientEvents>,
+  nickname: string,
+) {
   const code = generateRoomCode();
 
   const room: Room = {
@@ -25,12 +34,9 @@ export function handleCreateRoom(io: Server, socket: Socket, nickname: string) {
 }
 
 export function handleJoinRoom(
-  io: Server,
-  socket: Socket,
-  data: {
-    code: string;
-    nickname: string;
-  },
+  io: Server<ClientToServerEvents, ServerToClientEvents>,
+  socket: Socket<ClientToServerEvents, ServerToClientEvents>,
+  data: JoinRoomPayload,
 ) {
   const room = rooms.get(data.code);
 
