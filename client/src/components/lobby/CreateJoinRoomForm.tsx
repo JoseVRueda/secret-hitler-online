@@ -1,3 +1,5 @@
+import Button from "../ui/Button";
+
 interface JoinRoomFormProps {
   nickname: string;
   setNickname: (nickname: string) => void;
@@ -25,18 +27,10 @@ export default function JoinRoomForm(props: JoinRoomFormProps) {
         value={roomCode}
         onChange={(e) => setRoomCode(e.target.value)}
       />
-      <button
-        className="bg-blue-600 text-white p-2"
-        onClick={() => createRoom(nickname)}
-      >
-        Crear Sala
-      </button>
-      <button
-        className="border border-blue-600 text-blue-600 p-2"
-        onClick={() => joinRoom(roomCode, nickname)}
-      >
+      <Button onClick={() => createRoom(nickname)}>Crear Sala</Button>
+      <Button onClick={() => joinRoom(roomCode, nickname)} variant="outlined">
         Unirse
-      </button>
+      </Button>
     </main>
   );
 }
