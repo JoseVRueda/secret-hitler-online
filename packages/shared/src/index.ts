@@ -1,4 +1,4 @@
-export type { Player } from "./player.js";
+export type { Player, PlayerRole } from "./player.js";
 export type { Room } from "./room.js";
 export type {
   ClientToServerEvents,

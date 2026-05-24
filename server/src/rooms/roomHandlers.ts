@@ -1,4 +1,6 @@
+import { assignRoles } from "@/game/assignRoles.js";
 import { createGame, getGame } from "@/game/gameService.js";
+import { getPrivateGameView } from "@/game/privateGameView.js";
 import { generateRoomCode } from "@/utils/generateRoomCode.js";
 import type {
   ClientToServerEvents,
@@ -74,6 +76,16 @@ export function handleStartGame(io: Server, socket: Socket, code: string) {
     return;
   }
 
+  if (room.players.length < 5) {
+    socket.emit("error-message", "Se necesitan mínimo 5 jugadores");
+    return;
+  }
+
+  if (room.players.length > 10) {
+    socket.emit("error-message", "Máximo 10 jugadores");
+    return;
+  }
+
   const game = getGame(code);
 
   if (!game) {
@@ -81,7 +93,25 @@ export function handleStartGame(io: Server, socket: Socket, code: string) {
     return;
   }
 
+  room.players = assignRoles(room.players);
+
   game.send({ type: "START_GAME" });
+  game.send({ type: "ROLES_ASSIGNED" });
+
+  io.to(code).emit("room-updated", {
+    ...room,
+    players: room.players.map((p) => ({
+      id: p.socketId,
+      nickname: p.nickname,
+      isHost: p.isHost,
+    })),
+  });
+
+  for (const player of room.players) {
+    io.to(player.socketId).emit("private-game-updated", {
+      player: getPrivateGameView(player, room.players),
+    });
+  }
 
   io.to(code).emit("game-updated", {
     phase: game.getSnapshot().value,
