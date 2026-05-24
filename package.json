@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r --parallel build",
-    "start": "pnpm -r --parallel start"
+    "start": "pnpm -r --parallel start",
+    "lint": "pnpm -r --if-present lint"
   }
 }
