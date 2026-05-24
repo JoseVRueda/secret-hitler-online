@@ -5,6 +5,11 @@
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r --parallel build",
     "start": "pnpm -r --parallel start",
-    "lint": "pnpm -r --if-present lint"
+    "lint": "pnpm -r --if-present lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
   }
 }
