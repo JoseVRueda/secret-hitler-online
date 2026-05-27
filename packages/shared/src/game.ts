@@ -1,4 +1,4 @@
-import type { PlayerRole, PublicPlayer } from "./player.js";
+import type { PlayerRole } from "./player.js";
 
 export type GamePhase =
   | "lobby"
@@ -30,5 +30,5 @@ export type KnownPlayer = {
 
 export type PrivatePlayerView = {
   role?: PlayerRole;
-  knownPlayers: PublicPlayer[];
+  knownPlayers: KnownPlayer[];
 };

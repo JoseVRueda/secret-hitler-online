@@ -1,10 +1,10 @@
-import type { Room } from "@secret-hitler/shared";
+import type { PublicRoom } from "@secret-hitler/shared";
 import { ChancellorSelection } from "../game/ChancellorSelection";
 import { RoleReveal } from "../game/RoleReveal";
 import { StartGameButton } from "./StartGameButton";
 
 interface RoomProps {
-  room: Room;
+  room: PublicRoom;
 }
 
 export default function Room(props: RoomProps) {

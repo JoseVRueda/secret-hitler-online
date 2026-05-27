@@ -10,5 +10,5 @@ export type Player = {
 export type PublicPlayer = {
   socketId: string;
   nickname: string;
-  role?: PlayerRole;
+  isHost: boolean;
 };
