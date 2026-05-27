@@ -100,18 +100,6 @@ export function handleStartGame(io: Server, socket: Socket, code: string) {
 
   game.send({ type: "START_GAME" });
 
-  const snapshot = game.getSnapshot();
-
-  const presidentSocketId = getPresidentSocketId(
-    room,
-    snapshot.context.presidentIndex,
-  );
-
-  game.send({
-    type: "PRESIDENT_SELECTED",
-    presidentSocketId,
-  });
-
   io.to(code).emit("room-updated", toPublicRoom(room));
 
   for (const player of room.players) {
@@ -120,6 +108,76 @@ export function handleStartGame(io: Server, socket: Socket, code: string) {
       getPrivateGameView(player, room.players),
     );
   }
+
+  emitGameState(io, code, game);
+}
+
+function allRolesAcknowledged(
+  room: Room,
+  rolesAcknowledgedBy: string[],
+): boolean {
+  return room.players.every((player) =>
+    rolesAcknowledgedBy.includes(player.socketId),
+  );
+}
+
+export function handleAcknowledgeRole(
+  io: Server,
+  socket: Socket,
+  code: string,
+) {
+  const room = rooms.get(code);
+
+  if (!room) {
+    socket.emit("error-message", "Sala no encontrada");
+    return;
+  }
+
+  const player = room.players.find((p) => p.socketId === socket.id);
+
+  if (!player) {
+    socket.emit("error-message", "No estás en esta sala");
+    return;
+  }
+
+  const game = getGame(code);
+
+  if (!game) {
+    socket.emit("error-message", "Juego no encontrado");
+    return;
+  }
+
+  const snapshot = game.getSnapshot();
+
+  if (snapshot.value !== "roleAssignment") {
+    socket.emit("error-message", "No es momento de confirmar tu rol");
+    return;
+  }
+
+  game.send({
+    type: "ROLE_ACKNOWLEDGED",
+    socketId: socket.id,
+  });
+
+  const updatedSnapshot = game.getSnapshot();
+
+  emitGameState(io, code, game);
+
+  if (
+    !allRolesAcknowledged(room, updatedSnapshot.context.rolesAcknowledgedBy)
+  ) {
+    return;
+  }
+
+  const presidentSocketId = getPresidentSocketId(
+    room,
+    updatedSnapshot.context.presidentIndex,
+  );
+
+  game.send({
+    type: "PRESIDENT_SELECTED",
+    presidentSocketId,
+  });
 
   emitGameState(io, code, game);
 }

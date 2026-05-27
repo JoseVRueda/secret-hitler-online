@@ -1,4 +1,5 @@
 import {
+  handleAcknowledgeRole,
   handleCreateRoom,
   handleJoinRoom,
   handleSelectChancellor,
@@ -24,6 +25,10 @@ export function registerSocketHandlers(
 
   socket.on("start-game", (code: string) => {
     handleStartGame(io, socket, code);
+  });
+
+  socket.on("acknowledge-role", (data) => {
+    handleAcknowledgeRole(io, socket, data.code);
   });
 
   socket.on("select-chancellor", (data) => {

@@ -11,6 +11,7 @@ export const createGameMachine = (roomCode: string) =>
       presidentSocketId: null,
       chancellorSocketId: null,
       presidentIndex: 0,
+      rolesAcknowledgedBy: [] as string[],
     } satisfies GameContext,
 
     initial: "lobby",
@@ -18,12 +19,34 @@ export const createGameMachine = (roomCode: string) =>
     states: {
       lobby: {
         on: {
-          START_GAME: "roleAssignment",
+          START_GAME: {
+            target: "roleAssignment",
+            actions: assign({
+              round: 1,
+              presidentSocketId: null,
+              chancellorSocketId: null,
+              presidentIndex: 0,
+              rolesAcknowledgedBy: [] as string[],
+            }),
+          },
         },
       },
 
       roleAssignment: {
         on: {
+          ROLE_ACKNOWLEDGED: {
+            actions: assign({
+              rolesAcknowledgedBy: ({ context, event }) => {
+                const socketId = event.socketId as string;
+
+                if (context.rolesAcknowledgedBy.includes(socketId)) {
+                  return context.rolesAcknowledgedBy;
+                }
+
+                return [...context.rolesAcknowledgedBy, socketId];
+              },
+            }),
+          },
           PRESIDENT_SELECTED: {
             target: "chancellorSelection",
             actions: assign({
