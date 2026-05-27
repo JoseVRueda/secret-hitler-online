@@ -6,8 +6,13 @@ import { useEffect } from "react";
 
 export function SocketProvider() {
   useEffect(() => {
-    registerRoomSocketEvents();
-    registerGameSocketEvents();
+    const cleanupRoom = registerRoomSocketEvents();
+    const cleanupGame = registerGameSocketEvents();
+
+    return () => {
+      cleanupRoom();
+      cleanupGame();
+    };
   }, []);
 
   return null;
