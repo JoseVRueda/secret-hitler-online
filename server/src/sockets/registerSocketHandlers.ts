@@ -1,6 +1,7 @@
 import {
   handleCreateRoom,
   handleJoinRoom,
+  handleSelectChancellor,
   handleStartGame,
 } from "@/rooms/roomHandlers.js";
 import type {
@@ -23,5 +24,9 @@ export function registerSocketHandlers(
 
   socket.on("start-game", (code: string) => {
     handleStartGame(io, socket, code);
+  });
+
+  socket.on("select-chancellor", (data) => {
+    handleSelectChancellor(io, socket, data);
   });
 }

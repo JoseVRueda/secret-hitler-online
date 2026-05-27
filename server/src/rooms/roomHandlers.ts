@@ -1,6 +1,8 @@
 import { assignRoles } from "@/game/assignRoles.js";
+import { emitGameState } from "@/game/emitGameState.js";
 import { createGame, getGame } from "@/game/gameService.js";
 import { getPrivateGameView } from "@/game/privateGameView.js";
+import { getPresidentSocketId } from "@/game/selectPresident.js";
 import { generateRoomCode } from "@/utils/generateRoomCode.js";
 import type {
   ClientToServerEvents,
@@ -10,6 +12,7 @@ import type {
 } from "@secret-hitler/shared";
 import { Server, Socket } from "socket.io";
 import { rooms } from "./roomStore.js";
+import { toPublicRoom } from "./toPublicRoom.js";
 
 export function handleCreateRoom(
   io: Server<ClientToServerEvents, ServerToClientEvents>,
@@ -96,16 +99,20 @@ export function handleStartGame(io: Server, socket: Socket, code: string) {
   room.players = assignRoles(room.players);
 
   game.send({ type: "START_GAME" });
-  game.send({ type: "ROLES_ASSIGNED" });
 
-  io.to(code).emit("room-updated", {
-    ...room,
-    players: room.players.map(({ socketId, nickname, isHost }) => ({
-      socketId,
-      nickname,
-      isHost,
-    })),
+  const snapshot = game.getSnapshot();
+
+  const presidentSocketId = getPresidentSocketId(
+    room,
+    snapshot.context.presidentIndex,
+  );
+
+  game.send({
+    type: "PRESIDENT_SELECTED",
+    presidentSocketId,
   });
+
+  io.to(code).emit("room-updated", toPublicRoom(room));
 
   for (const player of room.players) {
     io.to(player.socketId).emit(
@@ -114,8 +121,62 @@ export function handleStartGame(io: Server, socket: Socket, code: string) {
     );
   }
 
-  io.to(code).emit("game-updated", {
-    phase: game.getSnapshot().value,
-    context: game.getSnapshot().context,
+  emitGameState(io, code, game);
+}
+
+export function handleSelectChancellor(
+  io: Server,
+  socket: Socket,
+  data: {
+    code: string;
+    chancellorSocketId: string;
+  },
+) {
+  const room = rooms.get(data.code);
+
+  if (!room) {
+    socket.emit("error-message", "Sala no encontrada");
+    return;
+  }
+
+  const game = getGame(data.code);
+
+  if (!game) {
+    socket.emit("error-message", "Juego no encontrado");
+    return;
+  }
+
+  const snapshot = game.getSnapshot();
+  const context = snapshot.context;
+
+  if (snapshot.value !== "chancellorSelection") {
+    socket.emit("error-message", "No es momento de elegir canciller");
+    return;
+  }
+
+  if (context.presidentSocketId !== socket.id) {
+    socket.emit("error-message", "Solo el presidente puede elegir canciller");
+    return;
+  }
+
+  if (data.chancellorSocketId === context.presidentSocketId) {
+    socket.emit("error-message", "El presidente no puede ser canciller");
+    return;
+  }
+
+  const candidate = room.players.find(
+    (player) => player.socketId === data.chancellorSocketId,
+  );
+
+  if (!candidate) {
+    socket.emit("error-message", "Jugador no encontrado");
+    return;
+  }
+
+  game.send({
+    type: "CHANCELLOR_SELECTED",
+    chancellorSocketId: data.chancellorSocketId,
   });
+
+  emitGameState(io, data.code, game);
 }

@@ -10,6 +10,7 @@ export const createGameMachine = (roomCode: string) =>
       round: 1,
       presidentSocketId: null,
       chancellorSocketId: null,
+      presidentIndex: 0,
     } satisfies GameContext,
 
     initial: "lobby",
@@ -22,12 +23,6 @@ export const createGameMachine = (roomCode: string) =>
       },
 
       roleAssignment: {
-        on: {
-          ROLES_ASSIGNED: "presidentSelection",
-        },
-      },
-
-      presidentSelection: {
         on: {
           PRESIDENT_SELECTED: {
             target: "chancellorSelection",
@@ -58,6 +53,7 @@ export const createGameMachine = (roomCode: string) =>
               round: ({ context }) => context.round + 1,
               presidentSocketId: null,
               chancellorSocketId: null,
+              presidentIndex: ({ context }) => context.presidentIndex + 1,
             }),
           },
         },
@@ -65,17 +61,11 @@ export const createGameMachine = (roomCode: string) =>
 
       legislativeSession: {
         on: {
-          POLICY_ENACTED: "executiveAction",
-          GAME_FINISHED: "gameOver",
-        },
-      },
-
-      executiveAction: {
-        on: {
           ACTION_COMPLETED: {
-            target: "presidentSelection",
+            target: "chancellorSelection",
             actions: assign({
               round: ({ context }) => context.round + 1,
+              presidentIndex: ({ context }) => context.presidentIndex + 1,
               presidentSocketId: null,
               chancellorSocketId: null,
             }),
