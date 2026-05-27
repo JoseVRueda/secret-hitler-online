@@ -8,6 +8,7 @@ export type {
 export type { Player, PlayerRole, PublicPlayer } from "./player.js";
 export type { PublicRoom, Room } from "./room.js";
 export type {
+  AcknowledgeRolePayload,
   ClientToServerEvents,
   JoinRoomPayload,
   ServerToClientEvents,

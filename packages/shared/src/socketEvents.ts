@@ -11,10 +11,15 @@ export type SelectChancellorPayload = {
   chancellorSocketId: string;
 };
 
+export type AcknowledgeRolePayload = {
+  code: string;
+};
+
 export type ClientToServerEvents = {
   "create-room": (nickname: string) => void;
   "join-room": (data: JoinRoomPayload) => void;
   "start-game": (code: string) => void;
+  "acknowledge-role": (data: AcknowledgeRolePayload) => void;
   "select-chancellor": (data: SelectChancellorPayload) => void;
 };
 

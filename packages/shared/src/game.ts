@@ -15,6 +15,7 @@ export type GameContext = {
   presidentSocketId: string | null;
   chancellorSocketId: string | null;
   presidentIndex: number;
+  rolesAcknowledgedBy: string[];
 };
 
 export type GameState = {
