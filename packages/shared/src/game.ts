@@ -3,7 +3,6 @@ import type { PlayerRole, PublicPlayer } from "./player.js";
 export type GamePhase =
   | "lobby"
   | "roleAssignment"
-  | "presidentSelection"
   | "chancellorSelection"
   | "voting"
   | "legislativeSession"

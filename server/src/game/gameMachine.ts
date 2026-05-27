@@ -48,7 +48,7 @@ export const createGameMachine = (roomCode: string) =>
         on: {
           VOTE_PASSED: "legislativeSession",
           VOTE_FAILED: {
-            target: "presidentSelection",
+            target: "chancellorSelection",
             actions: assign({
               round: ({ context }) => context.round + 1,
               presidentSocketId: null,
