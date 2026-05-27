@@ -4,6 +4,7 @@ import { socket } from "@/lib/socket";
 import { selectChancellor } from "@/services/gameService";
 import { useGameStore } from "@/store/useGameStore";
 import { useRoomStore } from "@/store/useRoomStore";
+import Button from "../ui/Button";
 
 export function ChancellorSelection() {
   const room = useRoomStore((s) => s.room);
@@ -38,13 +39,14 @@ export function ChancellorSelection() {
       {isPresident && (
         <div className="mt-4 flex flex-col gap-2">
           {candidates.map((player) => (
-            <button
+            <Button
               key={player.socketId}
-              className="rounded border px-4 py-2 text-left hover:bg-gray-100"
               onClick={() => selectChancellor(room.code, player.socketId)}
+              color="secondary"
+              variant="outlined"
             >
               Nominar a {player.nickname}
-            </button>
+            </Button>
           ))}
         </div>
       )}
