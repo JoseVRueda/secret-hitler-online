@@ -1,4 +1,5 @@
 import type { Room } from "@secret-hitler/shared";
+import { RoleReveal } from "../game/RoleReveal";
 import { StartGameButton } from "./StartGameButton";
 
 interface RoomProps {
@@ -20,6 +21,7 @@ export default function Room(props: RoomProps) {
         ))}
       </div>
       <StartGameButton roomCode={room.code} />
+      <RoleReveal />
     </main>
   );
 }

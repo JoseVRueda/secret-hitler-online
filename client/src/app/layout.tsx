@@ -1,3 +1,4 @@
+import { SocketProvider } from "@/providers/SockerProvider";
 import "./globals.css";
 
 export default function RootLayout({
@@ -7,6 +8,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <SocketProvider />
       <body>{children}</body>
     </html>
   );
