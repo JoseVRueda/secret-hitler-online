@@ -1,6 +1,6 @@
 "use client";
 
-import { socket } from "@/lib/socket";
+import { useCurrentPlayer } from "@/hooks/useCurrentPlayer";
 import { selectChancellor } from "@/services/gameService";
 import { useGameStore } from "@/store/useGameStore";
 import { useRoomStore } from "@/store/useRoomStore";
@@ -9,10 +9,12 @@ import Button from "../ui/Button";
 export function ChancellorSelection() {
   const room = useRoomStore((s) => s.room);
   const game = useGameStore((s) => s.game);
+  const currentPlayer = useCurrentPlayer();
 
   if (!room || !game) return null;
 
-  const isPresident = game.context.presidentSocketId === socket.id;
+  const isPresident =
+    game.context.presidentSocketId === currentPlayer?.socketId;
 
   const president = room.players.find(
     (p) => p.socketId === game.context.presidentSocketId,

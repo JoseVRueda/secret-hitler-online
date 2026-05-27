@@ -10,5 +10,6 @@ export type {
   AcknowledgeRolePayload,
   ClientToServerEvents,
   JoinRoomPayload,
+  SelectChancellorPayload,
   ServerToClientEvents,
 } from "./socketEvents.js";

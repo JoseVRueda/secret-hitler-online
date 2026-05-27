@@ -1,6 +1,6 @@
 "use client";
 
-import { socket } from "@/lib/socket";
+import { useCurrentPlayer } from "@/hooks/useCurrentPlayer";
 import { acknowledgeRole } from "@/services/gameService";
 import { useGameStore } from "@/store/useGameStore";
 import { useRoomStore } from "@/store/useRoomStore";
@@ -10,11 +10,12 @@ export function RoleReveal() {
   const room = useRoomStore((s) => s.room);
   const game = useGameStore((s) => s.game);
   const privatePlayer = useGameStore((s) => s.privatePlayer);
+  const currentPlayer = useCurrentPlayer();
 
   if (!room || !game || !privatePlayer?.role) return null;
 
   const hasAcknowledged = game.context.rolesAcknowledgedBy.includes(
-    socket.id ?? "",
+    currentPlayer?.socketId ?? "",
   );
   const acknowledgedCount = game.context.rolesAcknowledgedBy.length;
   const totalPlayers = room.players.length;

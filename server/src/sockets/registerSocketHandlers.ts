@@ -1,10 +1,9 @@
 import {
   handleAcknowledgeRole,
-  handleCreateRoom,
-  handleJoinRoom,
   handleSelectChancellor,
   handleStartGame,
-} from "@/rooms/roomHandlers.js";
+} from "@/rooms/gameHandlers.js";
+import { handleCreateRoom, handleJoinRoom } from "@/rooms/roomHandlers.js";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -23,12 +22,12 @@ export function registerSocketHandlers(
     handleJoinRoom(io, socket, data);
   });
 
-  socket.on("start-game", (code: string) => {
+  socket.on("start-game", (code) => {
     handleStartGame(io, socket, code);
   });
 
   socket.on("acknowledge-role", (data) => {
-    handleAcknowledgeRole(io, socket, data.code);
+    handleAcknowledgeRole(io, socket, data);
   });
 
   socket.on("select-chancellor", (data) => {
