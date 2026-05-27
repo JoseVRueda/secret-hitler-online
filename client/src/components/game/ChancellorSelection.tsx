@@ -14,8 +14,6 @@ export function ChancellorSelection() {
 
   const isPresident = game.context.presidentSocketId === socket.id;
 
-  if (game.phase !== "chancellorSelection") return null;
-
   const president = room.players.find(
     (p) => p.socketId === game.context.presidentSocketId,
   );

@@ -11,8 +11,7 @@ export function RoleReveal() {
   const game = useGameStore((s) => s.game);
   const privatePlayer = useGameStore((s) => s.privatePlayer);
 
-  if (!room || !game || game.phase !== "roleAssignment") return null;
-  if (!privatePlayer?.role) return null;
+  if (!room || !game || !privatePlayer?.role) return null;
 
   const hasAcknowledged = game.context.rolesAcknowledgedBy.includes(
     socket.id ?? "",
