@@ -6,7 +6,6 @@ export type GamePhase =
   | "chancellorSelection"
   | "voting"
   | "legislativeSession"
-  | "executiveAction"
   | "gameOver";
 
 export type GameContext = {
@@ -23,13 +22,11 @@ export type GameState = {
   context: GameContext;
 };
 
-export type KnownPlayer = {
-  socketId: string;
-  nickname: string;
-  role?: PlayerRole | "fascist";
-};
-
 export type PrivatePlayerView = {
   role?: PlayerRole;
-  knownPlayers: KnownPlayer[];
+  knownPlayers: Array<{
+    socketId: string;
+    nickname: string;
+    role?: PlayerRole;
+  }>;
 };

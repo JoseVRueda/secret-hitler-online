@@ -32,10 +32,6 @@ const upcomingPhaseCopy: Partial<
     title: "Sesión legislativa",
     description: "El presidente y el canciller legislarán pronto.",
   },
-  executiveAction: {
-    title: "Acción ejecutiva",
-    description: "Las acciones presidenciales estarán disponibles pronto.",
-  },
   gameOver: {
     title: "Fin de partida",
     description: "La partida ha terminado.",
