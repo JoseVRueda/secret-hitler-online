@@ -1,4 +1,5 @@
 import type { Room } from "@secret-hitler/shared";
+import { ChancellorSelection } from "../game/ChancellorSelection";
 import { RoleReveal } from "../game/RoleReveal";
 import { StartGameButton } from "./StartGameButton";
 
@@ -22,6 +23,7 @@ export default function Room(props: RoomProps) {
       </div>
       <StartGameButton roomCode={room.code} />
       <RoleReveal />
+      <ChancellorSelection />
     </main>
   );
 }
