@@ -6,10 +6,16 @@ export type JoinRoomPayload = {
   nickname: string;
 };
 
+export type SelectChancellorPayload = {
+  code: string;
+  chancellorSocketId: string;
+};
+
 export type ClientToServerEvents = {
   "create-room": (nickname: string) => void;
   "join-room": (data: JoinRoomPayload) => void;
   "start-game": (code: string) => void;
+  "select-chancellor": (data: SelectChancellorPayload) => void;
 };
 
 export type ServerToClientEvents = {
