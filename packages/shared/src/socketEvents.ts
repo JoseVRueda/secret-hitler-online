@@ -1,4 +1,5 @@
-import type { Room } from "./room.js";
+import type { GameState, PrivatePlayerView } from "./game.js";
+import type { PublicRoom } from "./room.js";
 
 export type JoinRoomPayload = {
   code: string;
@@ -12,6 +13,8 @@ export type ClientToServerEvents = {
 };
 
 export type ServerToClientEvents = {
-  "room-updated": (room: Room) => void;
+  "room-updated": (room: PublicRoom) => void;
   "error-message": (message: string) => void;
+  "game-updated": (game: GameState) => void;
+  "private-game-updated": (player: PrivatePlayerView) => void;
 };
