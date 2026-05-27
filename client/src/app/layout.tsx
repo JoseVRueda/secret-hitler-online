@@ -1,4 +1,4 @@
-import { SocketProvider } from "@/providers/SockerProvider";
+import { SocketProvider } from "@/providers/SocketProvider";
 import "./globals.css";
 
 export default function RootLayout({
