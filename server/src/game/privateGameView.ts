@@ -1,8 +1,12 @@
-import type { Player } from "@secret-hitler/shared";
+import type { Player, PrivatePlayerView } from "@secret-hitler/shared";
 
-export function getPrivateGameView(player: Player, players: Player[]) {
+export function getPrivateGameView(
+  player: Player,
+  players: Player[],
+): PrivatePlayerView {
   const fascists = players.filter(
-    (p) => p.role === "fascist" || p.role === "hitler",
+    (p): p is Player & { role: "fascist" | "hitler" } =>
+      p.role === "fascist" || p.role === "hitler",
   );
 
   if (player.role === "liberal") {
@@ -16,7 +20,7 @@ export function getPrivateGameView(player: Player, players: Player[]) {
     return {
       role: player.role,
       knownPlayers: fascists.map((p) => ({
-        id: p.socketId,
+        socketId: p.socketId,
         nickname: p.nickname,
         role: p.role,
       })),
@@ -31,7 +35,7 @@ export function getPrivateGameView(player: Player, players: Player[]) {
           ? fascists
               .filter((p) => p.socketId !== player.socketId)
               .map((p) => ({
-                id: p.socketId,
+                socketId: p.socketId,
                 nickname: p.nickname,
                 role: "fascist",
               }))
@@ -40,7 +44,6 @@ export function getPrivateGameView(player: Player, players: Player[]) {
   }
 
   return {
-    role: null,
     knownPlayers: [],
   };
 }

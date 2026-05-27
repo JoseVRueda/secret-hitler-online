@@ -1,4 +1,4 @@
-import type { GameContext } from "@/types/game.js";
+import type { GameContext } from "@secret-hitler/shared";
 import { assign, createMachine } from "xstate";
 
 export const createGameMachine = (roomCode: string) =>
@@ -8,8 +8,8 @@ export const createGameMachine = (roomCode: string) =>
     context: {
       roomCode,
       round: 1,
-      presidentId: null,
-      chancellorId: null,
+      presidentSocketId: null,
+      chancellorSocketId: null,
     } satisfies GameContext,
 
     initial: "lobby",
@@ -32,7 +32,7 @@ export const createGameMachine = (roomCode: string) =>
           PRESIDENT_SELECTED: {
             target: "chancellorSelection",
             actions: assign({
-              presidentId: ({ event }) => event.presidentId,
+              presidentSocketId: ({ event }) => event.presidentSocketId,
             }),
           },
         },
@@ -43,7 +43,7 @@ export const createGameMachine = (roomCode: string) =>
           CHANCELLOR_SELECTED: {
             target: "voting",
             actions: assign({
-              chancellorId: ({ event }) => event.chancellorId,
+              chancellorSocketId: ({ event }) => event.chancellorSocketId,
             }),
           },
         },
@@ -56,8 +56,8 @@ export const createGameMachine = (roomCode: string) =>
             target: "presidentSelection",
             actions: assign({
               round: ({ context }) => context.round + 1,
-              presidentId: null,
-              chancellorId: null,
+              presidentSocketId: null,
+              chancellorSocketId: null,
             }),
           },
         },
@@ -76,8 +76,8 @@ export const createGameMachine = (roomCode: string) =>
             target: "presidentSelection",
             actions: assign({
               round: ({ context }) => context.round + 1,
-              presidentId: null,
-              chancellorId: null,
+              presidentSocketId: null,
+              chancellorSocketId: null,
             }),
           },
           GAME_FINISHED: "gameOver",

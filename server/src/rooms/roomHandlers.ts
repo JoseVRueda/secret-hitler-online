@@ -100,17 +100,18 @@ export function handleStartGame(io: Server, socket: Socket, code: string) {
 
   io.to(code).emit("room-updated", {
     ...room,
-    players: room.players.map((p) => ({
-      id: p.socketId,
-      nickname: p.nickname,
-      isHost: p.isHost,
+    players: room.players.map(({ socketId, nickname, isHost }) => ({
+      socketId,
+      nickname,
+      isHost,
     })),
   });
 
   for (const player of room.players) {
-    io.to(player.socketId).emit("private-game-updated", {
-      player: getPrivateGameView(player, room.players),
-    });
+    io.to(player.socketId).emit(
+      "private-game-updated",
+      getPrivateGameView(player, room.players),
+    );
   }
 
   io.to(code).emit("game-updated", {

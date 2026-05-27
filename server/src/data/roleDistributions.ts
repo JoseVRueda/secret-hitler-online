@@ -1,0 +1,48 @@
+import type { PlayerRole } from "@secret-hitler/shared";
+
+export const roleDistributions: Record<number, PlayerRole[]> = {
+  5: ["hitler", "fascist", "liberal", "liberal", "liberal"],
+  6: ["hitler", "fascist", "liberal", "liberal", "liberal", "liberal"],
+  7: [
+    "hitler",
+    "fascist",
+    "fascist",
+    "liberal",
+    "liberal",
+    "liberal",
+    "liberal",
+  ],
+  8: [
+    "hitler",
+    "fascist",
+    "fascist",
+    "liberal",
+    "liberal",
+    "liberal",
+    "liberal",
+    "liberal",
+  ],
+  9: [
+    "hitler",
+    "fascist",
+    "fascist",
+    "fascist",
+    "liberal",
+    "liberal",
+    "liberal",
+    "liberal",
+    "liberal",
+  ],
+  10: [
+    "hitler",
+    "fascist",
+    "fascist",
+    "fascist",
+    "liberal",
+    "liberal",
+    "liberal",
+    "liberal",
+    "liberal",
+    "liberal",
+  ],
+};
