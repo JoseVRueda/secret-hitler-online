@@ -1,10 +1,12 @@
-import type { Room } from "@secret-hitler/shared";
-
 export function getPresidentSocketId(
-  room: Room,
+  playerSocketIds: string[],
   presidentIndex: number,
-): string {
-  const index = presidentIndex % room.players.length;
+): string | null {
+  if (playerSocketIds.length === 0) {
+    return null;
+  }
 
-  return room.players[index]?.socketId ?? "";
+  const index = presidentIndex % playerSocketIds.length;
+
+  return playerSocketIds[index] ?? null;
 }

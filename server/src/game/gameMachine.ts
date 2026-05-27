@@ -1,5 +1,26 @@
 import type { GameContext } from "@secret-hitler/shared";
 import { assign, createMachine } from "xstate";
+import { getPresidentSocketId } from "./selectPresident.js";
+
+function appendRoleAcknowledgement(
+  rolesAcknowledgedBy: string[],
+  socketId: string,
+): string[] {
+  if (rolesAcknowledgedBy.includes(socketId)) {
+    return rolesAcknowledgedBy;
+  }
+
+  return [...rolesAcknowledgedBy, socketId];
+}
+
+function allRolesAcknowledged(context: GameContext, socketId: string): boolean {
+  const nextAcknowledgements = appendRoleAcknowledgement(
+    context.rolesAcknowledgedBy,
+    socketId,
+  );
+
+  return nextAcknowledgements.length === context.playerSocketIds.length;
+}
 
 export const createGameMachine = (roomCode: string) =>
   createMachine({
@@ -8,9 +29,10 @@ export const createGameMachine = (roomCode: string) =>
     context: {
       roomCode,
       round: 1,
-      presidentSocketId: null,
-      chancellorSocketId: null,
+      presidentSocketId: null as string | null,
+      chancellorSocketId: null as string | null,
       presidentIndex: 0,
+      playerSocketIds: [] as string[],
       rolesAcknowledgedBy: [] as string[],
     } satisfies GameContext,
 
@@ -26,6 +48,7 @@ export const createGameMachine = (roomCode: string) =>
               presidentSocketId: null,
               chancellorSocketId: null,
               presidentIndex: 0,
+              playerSocketIds: ({ event }) => event.playerSocketIds as string[],
               rolesAcknowledgedBy: [] as string[],
             }),
           },
@@ -34,25 +57,34 @@ export const createGameMachine = (roomCode: string) =>
 
       roleAssignment: {
         on: {
-          ROLE_ACKNOWLEDGED: {
-            actions: assign({
-              rolesAcknowledgedBy: ({ context, event }) => {
-                const socketId = event.socketId as string;
-
-                if (context.rolesAcknowledgedBy.includes(socketId)) {
-                  return context.rolesAcknowledgedBy;
-                }
-
-                return [...context.rolesAcknowledgedBy, socketId];
-              },
-            }),
-          },
-          PRESIDENT_SELECTED: {
-            target: "chancellorSelection",
-            actions: assign({
-              presidentSocketId: ({ event }) => event.presidentSocketId,
-            }),
-          },
+          ROLE_ACKNOWLEDGED: [
+            {
+              guard: ({ context, event }) =>
+                allRolesAcknowledged(context, event.socketId as string),
+              target: "chancellorSelection",
+              actions: assign({
+                rolesAcknowledgedBy: ({ context, event }) =>
+                  appendRoleAcknowledgement(
+                    context.rolesAcknowledgedBy,
+                    event.socketId as string,
+                  ),
+                presidentSocketId: ({ context }) =>
+                  getPresidentSocketId(
+                    context.playerSocketIds,
+                    context.presidentIndex,
+                  ),
+              }),
+            },
+            {
+              actions: assign({
+                rolesAcknowledgedBy: ({ context, event }) =>
+                  appendRoleAcknowledgement(
+                    context.rolesAcknowledgedBy,
+                    event.socketId as string,
+                  ),
+              }),
+            },
+          ],
         },
       },
 
