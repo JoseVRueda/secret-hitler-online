@@ -1,5 +1,12 @@
 import {
+  handleAcknowledgePeek,
   handleAcknowledgeRole,
+  handleCastVote,
+  handleChancellorEnact,
+  handleConfirmVeto,
+  handleExecutiveAction,
+  handlePresidentDiscard,
+  handleRequestVeto,
   handleSelectChancellor,
   handleStartGame,
 } from "@/rooms/gameHandlers.js";
@@ -32,5 +39,33 @@ export function registerSocketHandlers(
 
   socket.on("select-chancellor", (data) => {
     handleSelectChancellor(io, socket, data);
+  });
+
+  socket.on("cast-vote", (data) => {
+    handleCastVote(io, socket, data);
+  });
+
+  socket.on("president-discard", (data) => {
+    handlePresidentDiscard(io, socket, data);
+  });
+
+  socket.on("chancellor-enact", (data) => {
+    handleChancellorEnact(io, socket, data);
+  });
+
+  socket.on("request-veto", (data) => {
+    handleRequestVeto(io, socket, data);
+  });
+
+  socket.on("confirm-veto", (data) => {
+    handleConfirmVeto(io, socket, data);
+  });
+
+  socket.on("executive-action", (data) => {
+    handleExecutiveAction(io, socket, data);
+  });
+
+  socket.on("acknowledge-peek", (data) => {
+    handleAcknowledgePeek(io, socket, data);
   });
 }
