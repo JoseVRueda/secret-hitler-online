@@ -1,6 +1,217 @@
 @import "tailwindcss";
 
+@theme {
+  /* Paleta "cartel de propaganda" */
+  --color-parchment: #e8dbbd;
+  --color-parchment-dark: #cdb992;
+  --color-ink: #171310;
+  --color-blood: #7c1c17;
+  --color-blood-bright: #a5271f;
+  --color-fascist: #b5461f;
+  --color-liberal: #2f5d62;
+  --color-brass: #b8925a;
+  --color-gold: #caa03c;
+  --color-olive: #4f4a30;
+
+  --animate-stamp-in: stamp-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-flip: flip 0.7s cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+:root {
+  /* Grano de papel reutilizable: ruido en escala de grises via feTurbulence */
+  --texture-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Base ---------- */
+
 body {
-  background-color: #000;
-  color: #fff;
+  min-height: 100vh;
+  background-color: var(--color-ink);
+  color: var(--color-parchment);
+  position: relative;
+}
+
+::selection {
+  background-color: var(--color-blood-bright);
+  color: var(--color-parchment);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-ink);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-brass);
+  border: 3px solid var(--color-ink);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-gold);
+}
+
+* {
+  scrollbar-color: var(--color-brass) var(--color-ink);
+  scrollbar-width: thin;
+}
+
+/* ---------- Texturas ---------- */
+
+/* Grano de papel/pergamino: se combina con el color de fondo del elemento
+   (p.ej. bg-parchment para un panel claro, o bg-ink para fondo oscuro). */
+.paper {
+  background-image:
+    radial-gradient(ellipse at top left, rgb(255 255 255 / 12%), transparent 60%),
+    radial-gradient(ellipse at bottom right, rgb(0 0 0 / 25%), transparent 55%),
+    var(--texture-noise);
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-blend-mode: overlay, multiply, overlay;
+}
+
+/* Overlay de grano fijo sobre toda la pantalla, para aplicar en body/contenedores raíz. */
+.grain {
+  position: relative;
+  isolation: isolate;
+}
+
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: var(--texture-noise);
+  background-repeat: repeat;
+}
+
+/* Viñeta oscura en los bordes, para dar profundidad tipo cartel envejecido. */
+.vignette {
+  position: relative;
+  isolation: isolate;
+}
+
+.vignette::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 45%,
+    rgb(0 0 0 / 55%) 100%
+  );
+}
+
+/* Sello de tinta rotado, para insignias tipo "HOST" / roles / estados. */
+.stamp {
+  position: relative;
+  display: inline-block;
+  padding: 0.2em 0.7em;
+  border: 3px solid currentcolor;
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px currentcolor inset;
+  transform: rotate(-4deg);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  mix-blend-mode: multiply;
+  opacity: 0.85;
+}
+
+.stamp::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: currentcolor;
+  opacity: 0.12;
+  mix-blend-mode: multiply;
+  mask-image: var(--texture-noise);
+  -webkit-mask-image: var(--texture-noise);
+  mask-size: 140px 140px;
+  -webkit-mask-size: 140px 140px;
+}
+
+/* Marco tipo art déco con doble borde y esquinas marcadas. */
+.deco-frame {
+  position: relative;
+}
+
+.deco-frame::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid var(--color-gold);
+  pointer-events: none;
+}
+
+.deco-frame::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-image:
+    linear-gradient(var(--color-gold), var(--color-gold)),
+    linear-gradient(var(--color-gold), var(--color-gold)),
+    linear-gradient(var(--color-gold), var(--color-gold)),
+    linear-gradient(var(--color-gold), var(--color-gold)),
+    linear-gradient(var(--color-gold), var(--color-gold)),
+    linear-gradient(var(--color-gold), var(--color-gold)),
+    linear-gradient(var(--color-gold), var(--color-gold)),
+    linear-gradient(var(--color-gold), var(--color-gold));
+  background-size:
+    14px 2px,
+    2px 14px,
+    14px 2px,
+    2px 14px,
+    14px 2px,
+    2px 14px,
+    14px 2px,
+    2px 14px;
+  background-position:
+    top left,
+    top left,
+    top right,
+    top right,
+    bottom left,
+    bottom left,
+    bottom right,
+    bottom right;
+}
+
+/* ---------- Keyframes ---------- */
+
+@keyframes stamp-in {
+  0% {
+    opacity: 0;
+    transform: scale(2.4) rotate(-20deg);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(0.9) rotate(4deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-4deg);
+  }
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateY(-180deg);
+  }
+
+  100% {
+    transform: rotateY(0deg);
+  }
 }
