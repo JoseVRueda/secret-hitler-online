@@ -25,7 +25,7 @@ export default function TextInput(props: TextInputProps) {
       {label && (
         <label
           htmlFor={inputId}
-          className="font-stamp text-xs uppercase tracking-[0.2em] text-parchment/80"
+          className="font-stamp text-xs uppercase tracking-[0.2em] text-ink/70"
         >
           {label}
         </label>
