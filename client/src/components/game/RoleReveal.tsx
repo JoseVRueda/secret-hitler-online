@@ -14,10 +14,10 @@ export function RoleReveal() {
 
   if (!room || !game || !privatePlayer?.role) return null;
 
-  const hasAcknowledged = game.context.rolesAcknowledgedBy.includes(
+  const hasAcknowledged = game.rolesAcknowledgedBy.includes(
     currentPlayer?.socketId ?? "",
   );
-  const acknowledgedCount = game.context.rolesAcknowledgedBy.length;
+  const acknowledgedCount = game.rolesAcknowledgedBy.length;
   const totalPlayers = room.players.length;
 
   return (

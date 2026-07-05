@@ -1,6 +1,6 @@
 import type {
-  GameState,
   PrivatePlayerView,
+  PublicGameState,
   PublicPlayer,
   PublicRoom,
 } from "@secret-hitler/shared";
@@ -12,8 +12,8 @@ export type RoomStore = {
 };
 
 export type GameStore = {
-  game: GameState | null;
+  game: PublicGameState | null;
   privatePlayer: PrivatePlayerView | null;
-  setGame: (game: GameState) => void;
+  setGame: (game: PublicGameState) => void;
   setPrivatePlayer: (player: PrivatePlayerView) => void;
 };

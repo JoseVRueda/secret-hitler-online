@@ -28,9 +28,17 @@ const upcomingPhaseCopy: Partial<
     title: "Votación",
     description: "La votación del gobierno estará disponible pronto.",
   },
-  legislativeSession: {
-    title: "Sesión legislativa",
-    description: "El presidente y el canciller legislarán pronto.",
+  presidentLegislative: {
+    title: "Sesión legislativa del presidente",
+    description: "El presidente descartará una carta pronto.",
+  },
+  chancellorEnact: {
+    title: "Promulgación del canciller",
+    description: "El canciller promulgará una carta pronto.",
+  },
+  executiveAction: {
+    title: "Poder ejecutivo",
+    description: "El presidente usará un poder especial pronto.",
   },
   gameOver: {
     title: "Fin de partida",

@@ -14,14 +14,14 @@ export function ChancellorSelection() {
   if (!room || !game) return null;
 
   const isPresident =
-    game.context.presidentSocketId === currentPlayer?.socketId;
+    game.presidentSocketId === currentPlayer?.socketId;
 
   const president = room.players.find(
-    (p) => p.socketId === game.context.presidentSocketId,
+    (p) => p.socketId === game.presidentSocketId,
   );
 
   const candidates = room.players.filter(
-    (p) => p.socketId !== game.context.presidentSocketId,
+    (p) => p.socketId !== game.presidentSocketId,
   );
 
   return (

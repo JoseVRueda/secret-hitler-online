@@ -1,9 +1,9 @@
 import { socket } from "@/lib/socket";
 import { useGameStore } from "@/store/useGameStore";
-import type { GameState, PrivatePlayerView } from "@secret-hitler/shared";
+import type { PrivatePlayerView, PublicGameState } from "@secret-hitler/shared";
 
 export function registerGameSocketEvents() {
-  const onGameUpdated = (game: GameState) => {
+  const onGameUpdated = (game: PublicGameState) => {
     useGameStore.getState().setGame(game);
   };
 
