@@ -52,6 +52,9 @@ export function handleStartGame(io: AppServer, socket: AppSocket, code: string) 
   game.send({
     type: "START_GAME",
     playerSocketIds: room.players.map((player) => player.socketId),
+    playerRoles: Object.fromEntries(
+      room.players.map((player) => [player.socketId, player.role ?? "liberal"]),
+    ),
   });
 
   emitRoomUpdated(io, room);

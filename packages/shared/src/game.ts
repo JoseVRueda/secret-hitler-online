@@ -68,6 +68,12 @@ export type GameContext = {
   vetoRequested: boolean;
   winInfo: WinInfo | null;
   lastElection: ElectionResult | null;
+  playerRoles: Record<string, PlayerRole>;
+  policyPeek: Policy[];
+  investigationResults: Record<
+    string,
+    { targetSocketId: string; party: "liberal" | "fascist" }
+  >;
 };
 
 export type GameState = {
