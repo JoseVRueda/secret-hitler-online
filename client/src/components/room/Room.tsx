@@ -1,5 +1,6 @@
 import type { PublicRoom } from "@secret-hitler/shared";
 import { GamePhaseView } from "../game/GamePhaseView";
+import { PolicyBoard } from "../game/PolicyBoard";
 
 interface RoomProps {
   room: PublicRoom;
@@ -19,7 +20,8 @@ export default function Room(props: RoomProps) {
           </div>
         ))}
       </div>
-      <div className="mt-6">
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <PolicyBoard />
         <GamePhaseView roomCode={room.code} />
       </div>
     </main>
