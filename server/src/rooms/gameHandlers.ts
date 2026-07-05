@@ -58,7 +58,7 @@ export function handleStartGame(io: AppServer, socket: AppSocket, code: string) 
   });
 
   emitRoomUpdated(io, room);
-  emitPrivateGameViews(io, room);
+  emitPrivateGameViews(io, room, game);
   emitGameState(io, code, game);
 }
 

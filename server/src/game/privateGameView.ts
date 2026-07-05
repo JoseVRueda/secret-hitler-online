@@ -1,9 +1,14 @@
-import type { Player, PrivatePlayerView } from "@secret-hitler/shared";
+import type {
+  GameContext,
+  GamePhase,
+  Player,
+  PrivatePlayerView,
+} from "@secret-hitler/shared";
 
-export function getPrivateGameView(
+function getRoleBasedView(
   player: Player,
   players: Player[],
-): PrivatePlayerView {
+): Pick<PrivatePlayerView, "role" | "knownPlayers"> {
   const fascists = players.filter(
     (p): p is Player & { role: "fascist" | "hitler" } =>
       p.role === "fascist" || p.role === "hitler",
@@ -37,7 +42,7 @@ export function getPrivateGameView(
               .map((p) => ({
                 socketId: p.socketId,
                 nickname: p.nickname,
-                role: "fascist",
+                role: "fascist" as const,
               }))
           : [],
     };
@@ -46,4 +51,48 @@ export function getPrivateGameView(
   return {
     knownPlayers: [],
   };
+}
+
+export function getPrivateGameView(
+  player: Player,
+  players: Player[],
+  phase: GamePhase,
+  context: GameContext,
+): PrivatePlayerView {
+  const view: PrivatePlayerView = getRoleBasedView(player, players);
+
+  if (player.socketId === context.presidentSocketId) {
+    if (phase === "presidentLegislative" && context.presidentDraw.length > 0) {
+      view.policiesToAct = context.presidentDraw;
+    }
+
+    if (context.policyPeek.length > 0) {
+      view.policyPeek = context.policyPeek;
+    }
+  }
+
+  if (
+    player.socketId === context.chancellorSocketId &&
+    phase === "chancellorEnact" &&
+    context.chancellorDraw.length > 0
+  ) {
+    view.policiesToAct = context.chancellorDraw;
+  }
+
+  const investigation = context.investigationResults[player.socketId];
+
+  if (investigation) {
+    const target = players.find(
+      (p) => p.socketId === investigation.targetSocketId,
+    );
+
+    if (target) {
+      view.investigationResult = {
+        nickname: target.nickname,
+        party: investigation.party,
+      };
+    }
+  }
+
+  return view;
 }
