@@ -13,6 +13,8 @@ export type {
   WinInfo,
   WinReason,
 } from "./game.js";
+export const AVATAR_COUNT = 20;
+
 export type { Player, PlayerRole, PublicPlayer } from "./player.js";
 export type { PublicRoom, Room } from "./room.js";
 export type {
@@ -26,6 +28,7 @@ export type {
   JoinRoomPayload,
   PresidentDiscardPayload,
   RequestVetoPayload,
+  SelectAvatarPayload,
   SelectChancellorPayload,
   ServerToClientEvents,
 } from "./socketEvents.js";
