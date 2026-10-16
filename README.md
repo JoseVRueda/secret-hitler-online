@@ -1,44 +1,48 @@
 # Secret Hitler Online
 
-Partida de [Secret Hitler](https://www.secrethitler.com/) en el navegador, para entre 5 y 10 jugadores. Cada persona entra con un apodo, se une a una sala con código y juega en tiempo real: elección de gobierno, votación, sesión legislativa y poderes ejecutivos.
+Browser adaptation of [Secret Hitler](https://www.secrethitler.com/) for 5 to 10 players. Each person picks a nickname, joins a room with a code, and plays in real time: government elections, voting, the legislative session, and executive powers.
 
-Las salas viven en memoria. Al reiniciar el servidor se pierden las partidas en curso.
+Rooms are kept in memory. Restarting the server drops any game in progress.
 
-## Cómo jugar
+## About
 
-1. Una persona crea la sala y comparte el código.
-2. El resto se une con ese código. Cada jugador elige un retrato.
-3. El anfitrión inicia la partida cuando hay entre 5 y 10 jugadores.
-4. Cada uno ve su rol en privado (liberal, fascista o Hitler) y confirma que lo ha leído.
-5. La partida sigue el flujo de mesa: el presidente nombra canciller, todos votan *ja* o *nein*, y si el gobierno pasa se juega una política.
-6. Según el tamaño de la mesa y las políticas fascistas promulgadas, el presidente puede investigar lealtad, convocar una elección especial, mirar las tres próximas políticas o ejecutar a un jugador. El veto se desbloquea con cinco políticas fascistas.
+A hidden-role game of governments, policies, and trust. Liberals try to pass five liberal policies or execute Hitler. Fascists try to pass six fascist policies or elect Hitler chancellor once three fascist policies are already on the board. Only you see your role, the cards in your hand, and the result of an investigation. Everyone else sees the public board.
 
-Condiciones de victoria:
+## How to play
 
-- Los liberales ganan con 5 políticas liberales, o si ejecutan a Hitler.
-- Los fascistas ganan con 6 políticas fascistas, o si Hitler es elegido canciller cuando ya hay al menos 3 políticas fascistas.
+1. One player creates a room and shares the code.
+2. Everyone else joins with that code and picks a portrait.
+3. The host starts the game once there are 5 to 10 players.
+4. Each player sees their role in private (liberal, fascist, or Hitler) and confirms they have read it.
+5. Play follows the tabletop flow: the president nominates a chancellor, everyone votes *ja* or *nein*, and a passed government enacts a policy.
+6. Depending on the table size and how many fascist policies have been enacted, the president may investigate loyalty, call a special election, peek at the next three policies, or execute a player. The veto unlocks after five fascist policies.
 
-## Estructura
+Win conditions:
 
-Monorepo con [pnpm](https://pnpm.io/).
+- Liberals win with 5 liberal policies, or by executing Hitler.
+- Fascists win with 6 fascist policies, or if Hitler is elected chancellor after at least 3 fascist policies are on the board.
+
+## Structure
+
+[pnpm](https://pnpm.io/) monorepo.
 
 ```
 secret-hitler-online/
-├── client/            # Next.js, Zustand y Socket.IO (http://localhost:3000)
-├── server/            # Express, Socket.IO y XState (http://localhost:3001)
-└── packages/shared/   # Tipos y eventos de socket compartidos
+├── client/            # Next.js, Zustand, and Socket.IO (http://localhost:3000)
+├── server/            # Express, Socket.IO, and XState (http://localhost:3001)
+└── packages/shared/   # Shared types and socket events
 ```
 
-El cliente solo recibe estado público de la sala y de la partida. El rol, las cartas en mano y el resultado de una investigación llegan en una vista privada por jugador.
+The client only receives the public room and game state. Role, cards in hand, and investigation results arrive in a private view per player.
 
-## Requisitos
+## Requirements
 
-- Node.js 20 o superior
-- pnpm 9 o superior
+- Node.js 20 or later
+- pnpm 9 or later
 
-## Puesta en marcha
+## Getting started
 
-Desde la raíz del repositorio:
+From the repository root:
 
 ```bash
 pnpm install
@@ -47,46 +51,46 @@ cp server/.env.example server/.env
 pnpm dev
 ```
 
-- Cliente: [http://localhost:3000](http://localhost:3000)
-- Servidor: [http://localhost:3001](http://localhost:3001)
-- Salud del servidor: [http://localhost:3001/health](http://localhost:3001/health)
+- Client: [http://localhost:3000](http://localhost:3000)
+- Server: [http://localhost:3001](http://localhost:3001)
+- Server health: [http://localhost:3001/health](http://localhost:3001/health)
 
-Para probar en local, abre varias pestañas o ventanas del navegador (o varios perfiles) y únete a la misma sala.
+To try it locally, open several browser tabs or windows (or separate profiles) and join the same room.
 
-## Variables de entorno
+## Environment variables
 
-En desarrollo, si no existen los archivos `.env`, el cliente y el servidor usan los valores de los ejemplos.
+In development, if the env files are missing, the client and server fall back to the example values.
 
-**Cliente** (`client/.env.local`):
+**Client** (`client/.env.local`):
 
-| Variable | Descripción | Desarrollo |
+| Variable | Description | Development |
 | --- | --- | --- |
-| `NEXT_PUBLIC_CLIENT_URL` | URL pública del cliente | `http://localhost:3000` |
-| `NEXT_PUBLIC_SERVER_URL` | URL del servidor Socket.IO | `http://localhost:3001` |
+| `NEXT_PUBLIC_CLIENT_URL` | Public client URL | `http://localhost:3000` |
+| `NEXT_PUBLIC_SERVER_URL` | Socket.IO server URL | `http://localhost:3001` |
 
-**Servidor** (`server/.env`):
+**Server** (`server/.env`):
 
-| Variable | Descripción | Desarrollo |
+| Variable | Description | Development |
 | --- | --- | --- |
-| `SERVER_PORT` | Puerto HTTP | `3001` |
-| `CLIENT_URL` | Origen permitido por CORS | `http://localhost:3000` |
+| `SERVER_PORT` | HTTP port | `3001` |
+| `CLIENT_URL` | Origin allowed by CORS | `http://localhost:3000` |
 
-En producción hay que definir estas variables: el servidor no aplica valores por defecto cuando `NODE_ENV` es `production`.
+In production these variables must be set. The server does not apply defaults when `NODE_ENV` is `production`.
 
 ## Scripts
 
-Desde la raíz:
+From the root:
 
-| Comando | Qué hace |
+| Command | What it does |
 | --- | --- |
-| `pnpm dev` | Arranca cliente y servidor en paralelo |
-| `pnpm build` | Compila ambos paquetes |
-| `pnpm start` | Arranca las builds de producción |
-| `pnpm lint` | ESLint y comprobación de tipos donde exista el script |
-| `pnpm format` | Formatea el repositorio con Prettier |
+| `pnpm dev` | Starts the client and server in parallel |
+| `pnpm build` | Builds both packages |
+| `pnpm start` | Starts the production builds |
+| `pnpm lint` | Runs ESLint and typecheck where a lint script exists |
+| `pnpm format` | Formats the repository with Prettier |
 
-## Créditos y licencia de los assets
+## Asset credits and license
 
-Los tableros, cartas, retratos, fichas y pantallas de victoria proceden de Secret Hitler (Goat, Wolf & Cabbage) y de la adaptación [secret-hitler.online](https://secret-hitler.online/). Están bajo [Creative Commons Attribution-NonCommercial-ShareAlike 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): hay que atribuir la obra, no se pueden usar con fines comerciales y las obras derivadas de ese material deben publicarse bajo la misma licencia.
+Boards, cards, portraits, tokens, and victory screens come from Secret Hitler (Goat, Wolf & Cabbage) and the [secret-hitler.online](https://secret-hitler.online/) adaptation. They are licensed under [Creative Commons Attribution-NonCommercial-ShareAlike 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): attribute the original work, do not use the assets commercially, and share derivatives of that material under the same license.
 
-El detalle está en [`client/src/assets/CREDITS.md`](client/src/assets/CREDITS.md).
+Details are in [`client/src/assets/CREDITS.md`](client/src/assets/CREDITS.md).
