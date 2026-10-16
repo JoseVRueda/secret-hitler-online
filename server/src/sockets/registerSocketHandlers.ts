@@ -10,7 +10,11 @@ import {
   handleSelectChancellor,
   handleStartGame,
 } from "@/rooms/gameHandlers.js";
-import { handleCreateRoom, handleJoinRoom } from "@/rooms/roomHandlers.js";
+import {
+  handleCreateRoom,
+  handleJoinRoom,
+  handleSelectAvatar,
+} from "@/rooms/roomHandlers.js";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -27,6 +31,10 @@ export function registerSocketHandlers(
 
   socket.on("join-room", (data) => {
     handleJoinRoom(io, socket, data);
+  });
+
+  socket.on("select-avatar", (data) => {
+    handleSelectAvatar(io, socket, data);
   });
 
   socket.on("start-game", (code) => {

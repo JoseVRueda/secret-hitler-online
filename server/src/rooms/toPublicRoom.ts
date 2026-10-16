@@ -7,6 +7,7 @@ export function toPublicRoom(room: Room): PublicRoom {
       socketId: player.socketId,
       nickname: player.nickname,
       isHost: player.isHost,
+      avatar: player.avatar,
     })),
   };
 }
