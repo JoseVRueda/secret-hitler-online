@@ -4,43 +4,41 @@ import { useCurrentPlayer } from "@/hooks/useCurrentPlayer";
 import { presidentDiscard } from "@/services/gameService";
 import { useGameStore } from "@/store/useGameStore";
 import { useRoomStore } from "@/store/useRoomStore";
-import { PolicyCard } from "./PolicyCard";
+import PolicyCard from "../ui/PolicyCard";
+import Panel from "../ui/Panel";
 
 export function PresidentLegislative() {
-  const room = useRoomStore((s) => s.room);
-  const game = useGameStore((s) => s.game);
-  const privatePlayer = useGameStore((s) => s.privatePlayer);
+  const room = useRoomStore((state) => state.room);
+  const game = useGameStore((state) => state.game);
+  const privatePlayer = useGameStore((state) => state.privatePlayer);
   const currentPlayer = useCurrentPlayer();
 
   if (!room || !game) return null;
 
-  const isPresident =
-    game.presidentSocketId === currentPlayer?.socketId;
+  const isPresident = game.presidentSocketId === currentPlayer?.socketId;
   const policies = privatePlayer?.policiesToAct ?? [];
 
   return (
-    <section className="rounded-xl border p-6">
-      <h2 className="text-xl font-bold">Sesión legislativa — Presidente</h2>
-
+    <Panel title="Sesión legislativa">
       {!isPresident && (
-        <p className="mt-4 text-sm opacity-70">
+        <p className="text-center font-body text-sm text-muted">
           El presidente está descartando una carta...
         </p>
       )}
 
       {isPresident && policies.length > 0 && (
         <>
-          <p className="mt-4">
+          <p className="text-center font-body">
             Has recibido 3 cartas. Descarta una para pasar las otras dos al
             canciller.
           </p>
-          <div className="mt-6 flex flex-wrap gap-4">
+          <div className="mt-6 flex flex-wrap justify-center gap-4">
             {policies.map((policy, index) => (
               <PolicyCard
                 key={`${policy}-${index}`}
                 policy={policy}
                 actionLabel="Descartar"
-                onSelect={(p) => presidentDiscard(room.code, p)}
+                onSelect={(selected) => presidentDiscard(room.code, selected)}
               />
             ))}
           </div>
@@ -48,8 +46,10 @@ export function PresidentLegislative() {
       )}
 
       {isPresident && policies.length === 0 && (
-        <p className="mt-4 text-sm opacity-70">Esperando cartas...</p>
+        <p className="text-center font-body text-sm text-muted">
+          Esperando cartas...
+        </p>
       )}
-    </section>
+    </Panel>
   );
 }

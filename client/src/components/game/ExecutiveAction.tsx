@@ -1,14 +1,13 @@
 "use client";
 
 import { useCurrentPlayer } from "@/hooks/useCurrentPlayer";
-import {
-  acknowledgePeek,
-  executiveAction,
-} from "@/services/gameService";
+import { acknowledgePeek, executiveAction } from "@/services/gameService";
 import { useGameStore } from "@/store/useGameStore";
 import { useRoomStore } from "@/store/useRoomStore";
 import type { ExecutivePower } from "@secret-hitler/shared";
 import Button from "../ui/Button";
+import Panel from "../ui/Panel";
+import PolicyCard from "../ui/PolicyCard";
 
 const powerTitles: Record<ExecutivePower, string> = {
   investigateLoyalty: "Investigar lealtad",
@@ -19,106 +18,62 @@ const powerTitles: Record<ExecutivePower, string> = {
 
 const powerDescriptions: Record<ExecutivePower, string> = {
   investigateLoyalty:
-    "Elige un jugador vivo para conocer su afiliación (liberal o fascista).",
+    "Elige en la mesa a un jugador vivo que aún no hayas investigado.",
   specialElection:
-    "Elige un jugador para que sea el próximo presidente en esta ronda.",
+    "Elige en la mesa al jugador que será el próximo presidente.",
   policyPeek: "Mira las 3 cartas superiores del mazo.",
-  execution: "Elige un jugador para eliminar de la partida.",
+  execution: "Elige en la mesa al jugador que quieres eliminar.",
 };
 
 export function ExecutiveAction() {
-  const room = useRoomStore((s) => s.room);
-  const game = useGameStore((s) => s.game);
-  const privatePlayer = useGameStore((s) => s.privatePlayer);
+  const room = useRoomStore((state) => state.room);
+  const game = useGameStore((state) => state.game);
+  const privatePlayer = useGameStore((state) => state.privatePlayer);
   const currentPlayer = useCurrentPlayer();
 
   if (!room || !game || game.phase !== "executiveAction") return null;
 
-  const isPresident =
-    game.presidentSocketId === currentPlayer?.socketId;
+  const isPresident = game.presidentSocketId === currentPlayer?.socketId;
   const power = game.pendingPower;
-  const policyPeek = privatePlayer?.policyPeek;
-
-  if (!power && !policyPeek?.length) return null;
-
+  const policyPeek = privatePlayer?.policyPeek ?? [];
   const activePower: ExecutivePower = power ?? "policyPeek";
-  const alivePlayers = room.players.filter(
-    (p) =>
-      !game.deadPlayerSocketIds.includes(p.socketId) &&
-      p.socketId !== game.presidentSocketId,
-  );
+
+  if (!power && policyPeek.length === 0) return null;
 
   return (
-    <section className="rounded-xl border p-6">
-      <h2 className="text-xl font-bold">{powerTitles[activePower]}</h2>
-      <p className="mt-2 text-sm opacity-70">
+    <Panel title={powerTitles[activePower]}>
+      <p className="text-center font-body text-sm text-muted">
         {powerDescriptions[activePower]}
       </p>
 
       {!isPresident && (
-        <p className="mt-4 text-sm opacity-70">
+        <p className="mt-4 text-center font-body text-sm text-muted">
           El presidente está usando su poder ejecutivo...
         </p>
       )}
 
-      {isPresident && power === "policyPeek" && !policyPeek?.length && (
-        <div className="mt-6">
+      {isPresident && power === "policyPeek" && policyPeek.length === 0 && (
+        <div className="mt-6 flex justify-center">
           <Button onClick={() => executiveAction(room.code)}>
             Ojear las 3 cartas superiores
           </Button>
         </div>
       )}
 
-      {isPresident && policyPeek && policyPeek.length > 0 && (
+      {isPresident && policyPeek.length > 0 && (
         <div className="mt-6">
-          <p className="mb-4 font-medium">Cartas superiores del mazo:</p>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap justify-center gap-3">
             {policyPeek.map((policy, index) => (
-              <span
-                key={`${policy}-${index}`}
-                className={`rounded border-2 px-4 py-2 ${
-                  policy === "liberal"
-                    ? "border-blue-400 bg-blue-900/40"
-                    : "border-red-500 bg-red-900/40"
-                }`}
-              >
-                {policy === "liberal" ? "Liberal" : "Fascista"}
-              </span>
+              <PolicyCard key={`${policy}-${index}`} policy={policy} />
             ))}
           </div>
-          <div className="mt-6">
+          <div className="mt-6 flex justify-center">
             <Button onClick={() => acknowledgePeek(room.code)}>
-              He visto las cartas — continuar
+              He visto las cartas
             </Button>
           </div>
         </div>
       )}
-
-      {isPresident &&
-        (power === "investigateLoyalty" ||
-          power === "specialElection" ||
-          power === "execution") && (
-          <div className="mt-6 flex flex-col gap-2">
-            {alivePlayers.map((player) => (
-              <Button
-                key={player.socketId}
-                onClick={() =>
-                  executiveAction(room.code, player.socketId)
-                }
-                color="secondary"
-                variant="outlined"
-              >
-                {power === "execution" ? "Ejecutar" : "Elegir"} a{" "}
-                {player.nickname}
-              </Button>
-            ))}
-            {power === "specialElection" && alivePlayers.length === 0 && (
-              <p className="text-sm opacity-70">
-                No hay candidatos disponibles.
-              </p>
-            )}
-          </div>
-        )}
-    </section>
+    </Panel>
   );
 }

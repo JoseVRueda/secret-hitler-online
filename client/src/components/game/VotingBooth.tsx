@@ -1,98 +1,79 @@
 "use client";
 
+import voteNo from "@/assets/cards/vote-no.png";
+import voteYes from "@/assets/cards/vote-yes.png";
 import { useCurrentPlayer } from "@/hooks/useCurrentPlayer";
 import { castVote } from "@/services/gameService";
 import { useGameStore } from "@/store/useGameStore";
 import { useRoomStore } from "@/store/useRoomStore";
-import Button from "../ui/Button";
+import Image from "next/image";
+import Panel from "../ui/Panel";
 
 export function VotingBooth() {
-  const room = useRoomStore((s) => s.room);
-  const game = useGameStore((s) => s.game);
+  const room = useRoomStore((state) => state.room);
+  const game = useGameStore((state) => state.game);
   const currentPlayer = useCurrentPlayer();
 
   if (!room || !game) return null;
 
   const isAlive =
-    currentPlayer &&
-    !game.deadPlayerSocketIds.includes(currentPlayer.socketId);
+    currentPlayer && !game.deadPlayerSocketIds.includes(currentPlayer.socketId);
   const hasVoted = game.hasVotedSocketIds.includes(
     currentPlayer?.socketId ?? "",
   );
-  const canVote = isAlive && !hasVoted;
-
+  const canVote = Boolean(isAlive && !hasVoted);
   const president = room.players.find(
-    (p) => p.socketId === game.presidentSocketId,
+    (player) => player.socketId === game.presidentSocketId,
   );
   const chancellor = room.players.find(
-    (p) => p.socketId === game.chancellorSocketId,
+    (player) => player.socketId === game.chancellorSocketId,
   );
-
-  const voters = game.hasVotedSocketIds
-    .map((id) => room.players.find((p) => p.socketId === id)?.nickname)
-    .filter(Boolean);
-
-  const lastElection = game.lastElection;
+  const aliveCount = room.players.length - game.deadPlayerSocketIds.length;
 
   return (
-    <section className="rounded-xl border p-6">
-      <h2 className="text-xl font-bold">Votación del gobierno</h2>
-      <p className="mt-2">
+    <Panel title="Votación del gobierno">
+      <p className="text-center font-body">
         Gobierno propuesto:{" "}
-        <strong>{president?.nickname ?? "?"}</strong> (presidente) +{" "}
-        <strong>{chancellor?.nickname ?? "?"}</strong> (canciller)
+        <strong className="text-cream">{president?.nickname ?? "?"}</strong>{" "}
+        como presidente y{" "}
+        <strong className="text-cream">{chancellor?.nickname ?? "?"}</strong>{" "}
+        como canciller.
       </p>
 
       {canVote && (
-        <div className="mt-6 flex gap-4">
-          <Button onClick={() => castVote(room.code, "ja")}>Ja ✓</Button>
-          <Button
-            onClick={() => castVote(room.code, "nein")}
-            color="secondary"
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+          <button
+            type="button"
+            onClick={() => castVote(room.code, "ja")}
+            className="transition-transform hover:-translate-y-1"
           >
-            Nein ✗
-          </Button>
+            <Image src={voteYes} alt="Ja" className="h-auto w-36 sm:w-48" />
+          </button>
+          <button
+            type="button"
+            onClick={() => castVote(room.code, "nein")}
+            className="transition-transform hover:-translate-y-1"
+          >
+            <Image src={voteNo} alt="Nein" className="h-auto w-36 sm:w-48" />
+          </button>
         </div>
       )}
 
       {!isAlive && (
-        <p className="mt-4 text-sm opacity-70">
+        <p className="mt-4 text-center font-body text-sm text-muted">
           Has sido eliminado y no puedes votar.
         </p>
       )}
 
       {isAlive && hasVoted && (
-        <p className="mt-4 text-sm opacity-70">
+        <p className="mt-4 text-center font-body text-sm text-muted">
           Ya has votado. Esperando al resto...
         </p>
       )}
 
-      {voters.length > 0 && (
-        <div className="mt-4">
-          <p className="text-sm font-medium">
-            Han votado ({voters.length}):
-          </p>
-          <p className="mt-1 text-sm opacity-70">{voters.join(", ")}</p>
-        </div>
-      )}
-
-      {lastElection && game.phase !== "voting" && (
-        <div className="mt-6 rounded-lg border border-dashed p-4">
-          <p className="font-medium">Resultado de la última elección</p>
-          <p className="mt-2 text-sm">
-            {lastElection.passed ? (
-              <span className="text-green-400">Gobierno electo</span>
-            ) : (
-              <span className="text-red-400">Gobierno rechazado</span>
-            )}
-          </p>
-          <p className="mt-2 text-xs opacity-60">
-            Votos: {lastElection.votes.filter((v) => v.vote === "ja").length}{" "}
-            Ja /{" "}
-            {lastElection.votes.filter((v) => v.vote === "nein").length} Nein
-          </p>
-        </div>
-      )}
-    </section>
+      <p className="mt-4 text-center font-body text-sm text-muted">
+        Han votado {game.hasVotedSocketIds.length} de {aliveCount}
+      </p>
+    </Panel>
   );
 }

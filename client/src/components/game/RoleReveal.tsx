@@ -1,128 +1,143 @@
 "use client";
 
+import envelopeBack from "@/assets/cards/role-envelope-back.png";
+import envelopeFront from "@/assets/cards/role-envelope-front.png";
 import { useCurrentPlayer } from "@/hooks/useCurrentPlayer";
+import { cn } from "@/lib/cn";
+import { getRoleCard } from "@/lib/roleCards";
 import { acknowledgeRole } from "@/services/gameService";
 import { useGameStore } from "@/store/useGameStore";
 import { useRoomStore } from "@/store/useRoomStore";
 import type { PlayerRole } from "@secret-hitler/shared";
+import Image from "next/image";
+import { useState } from "react";
+import PlayerRow from "../player/PlayerRow";
 import Button from "../ui/Button";
 import Panel from "../ui/Panel";
-import Stamp from "../ui/Stamp";
 
-const roleInfo: Record<
-  PlayerRole,
-  {
-    label: string;
-    icon: string;
-    textClass: string;
-    borderClass: string;
-    bgClass: string;
-    stampColor: "liberal" | "fascist" | "ink";
-  }
-> = {
-  liberal: {
-    label: "Liberal",
-    icon: "🕊️",
-    textClass: "text-liberal",
-    borderClass: "border-liberal",
-    bgClass: "bg-liberal/10",
-    stampColor: "liberal",
-  },
-  fascist: {
-    label: "Fascista",
-    icon: "🟥",
-    textClass: "text-fascist",
-    borderClass: "border-fascist",
-    bgClass: "bg-fascist/10",
-    stampColor: "fascist",
-  },
-  hitler: {
-    label: "Hitler",
-    icon: "☠️",
-    textClass: "text-ink",
-    borderClass: "border-ink",
-    bgClass: "bg-ink/10",
-    stampColor: "ink",
-  },
+const roleLabels: Record<PlayerRole, string> = {
+  liberal: "Liberal",
+  fascist: "Fascista",
+  hitler: "Hitler",
 };
 
+const roleTextClass: Record<PlayerRole, string> = {
+  liberal: "text-liberal",
+  fascist: "text-fascist",
+  hitler: "text-cream",
+};
+
+type EnvelopeStage = "closed" | "back" | "open";
+
 export function RoleReveal() {
-  const room = useRoomStore((s) => s.room);
-  const game = useGameStore((s) => s.game);
-  const privatePlayer = useGameStore((s) => s.privatePlayer);
+  const room = useRoomStore((state) => state.room);
+  const game = useGameStore((state) => state.game);
+  const privatePlayer = useGameStore((state) => state.privatePlayer);
   const currentPlayer = useCurrentPlayer();
-
-  if (!room || !game || !privatePlayer?.role) return null;
-
-  const hasAcknowledged = game.rolesAcknowledgedBy.includes(
+  const hasAcknowledged = game?.rolesAcknowledgedBy.includes(
     currentPlayer?.socketId ?? "",
   );
+  const [stage, setStage] = useState<EnvelopeStage>(
+    hasAcknowledged ? "open" : "closed",
+  );
+
+  if (!room || !game || !privatePlayer?.role || !currentPlayer) return null;
+
+  const playerIndex = Math.max(
+    0,
+    room.players.findIndex(
+      (player) => player.socketId === currentPlayer.socketId,
+    ),
+  );
+  const role = privatePlayer.role;
   const acknowledgedCount = game.rolesAcknowledgedBy.length;
-  const totalPlayers = room.players.length;
-  const info = roleInfo[privatePlayer.role];
+  const knownPlayers = privatePlayer.knownPlayers.flatMap((known) => {
+    const player = room.players.find(
+      (candidate) => candidate.socketId === known.socketId,
+    );
+    return player ? [player] : [];
+  });
+  const knownRoles = Object.fromEntries(
+    privatePlayer.knownPlayers
+      .filter((known) => known.role)
+      .map((known) => [known.socketId, known.role]),
+  );
+
+  function openEnvelope() {
+    setStage("back");
+    window.setTimeout(() => setStage("open"), 700);
+  }
 
   return (
-    <Panel
-      title="Dossier secreto"
-      stamp={
-        <Stamp color="blood" className="animate-stamp-in">
-          Confidencial
-        </Stamp>
-      }
-    >
-      <div
-        className={`deco-frame flex flex-col items-center gap-2 border-4 py-8 ${info.borderClass} ${info.bgClass}`}
-      >
-        <span className="font-stamp text-xs uppercase tracking-[0.3em] text-ink/60">
-          Tu identidad es
-        </span>
-        <span
-          className={`font-poster text-4xl uppercase tracking-wide ${info.textClass}`}
-        >
-          {info.icon} {info.label}
-        </span>
+    <Panel title="Tu identidad">
+      <div className="mx-auto w-48 [perspective:1000px] sm:w-56">
+        {stage === "open" ? (
+          <Image
+            src={getRoleCard(role, playerIndex)}
+            alt={`Carta de rol ${roleLabels[role]}`}
+            className="h-auto w-full animate-rise"
+          />
+        ) : (
+          <div
+            className={cn(
+              "relative transition-transform duration-700 [transform-style:preserve-3d]",
+              stage === "back" && "[transform:rotateY(180deg)]",
+            )}
+          >
+            <Image
+              src={envelopeFront}
+              alt="Sobre cerrado"
+              className="h-auto w-full [backface-visibility:hidden]"
+            />
+            <Image
+              src={envelopeBack}
+              alt=""
+              className="absolute inset-0 h-auto w-full [transform:rotateY(180deg)] [backface-visibility:hidden]"
+            />
+          </div>
+        )}
       </div>
 
-      {privatePlayer.knownPlayers.length > 0 && (
-        <div className="mt-6">
-          <h3 className="mb-3 border-b border-ink/30 pb-2 font-stamp text-xs uppercase tracking-[0.25em] text-ink/70">
-            Expediente — jugadores que conoces
-          </h3>
-          <ul className="grid gap-2 sm:grid-cols-2">
-            {privatePlayer.knownPlayers.map((p) => (
-              <li
-                key={p.socketId}
-                className="flex items-center justify-between gap-3 border border-ink/30 bg-parchment-dark/40 px-3 py-2"
-              >
-                <span className="font-stamp text-sm uppercase tracking-wide text-ink">
-                  {p.nickname}
-                </span>
-                {p.role && (
-                  <Stamp
-                    color={roleInfo[p.role].stampColor}
-                    className="text-[0.6rem]"
-                  >
-                    {roleInfo[p.role].label}
-                  </Stamp>
-                )}
-              </li>
-            ))}
-          </ul>
+      {stage === "open" && (
+        <p
+          className={cn(
+            "mt-4 text-center font-display text-3xl tracking-wide",
+            roleTextClass[role],
+          )}
+        >
+          {roleLabels[role]}
+        </p>
+      )}
+
+      {stage === "closed" && (
+        <div className="mt-6 flex justify-center">
+          <Button onClick={openEnvelope}>Abrir el sobre</Button>
         </div>
       )}
 
-      <div className="mt-8 flex flex-col items-center gap-3">
-        {!hasAcknowledged ? (
-          <Button onClick={() => acknowledgeRole(room.code)}>
-            He leído mi rol — continuar
-          </Button>
-        ) : (
-          <p className="font-stamp text-sm text-ink/60">
-            Esperando al resto de jugadores ({acknowledgedCount}/
-            {totalPlayers})
-          </p>
-        )}
-      </div>
+      {stage === "open" && knownPlayers.length > 0 && (
+        <div className="mt-6">
+          <h3 className="mb-2 text-center font-body text-xs font-bold tracking-[0.2em] text-muted uppercase">
+            Jugadores que conoces
+          </h3>
+          <PlayerRow players={knownPlayers} roles={knownRoles} />
+        </div>
+      )}
+
+      {stage === "open" && (
+        <div className="mt-6 flex flex-col items-center gap-3">
+          {!hasAcknowledged ? (
+            <Button onClick={() => acknowledgeRole(room.code)}>
+              He leído mi rol
+            </Button>
+          ) : (
+            <p className="font-body text-sm text-muted">
+              Esperando al resto de jugadores ({acknowledgedCount}/
+              {room.players.length})
+            </p>
+          )}
+        </div>
+      )}
     </Panel>
   );
 }
