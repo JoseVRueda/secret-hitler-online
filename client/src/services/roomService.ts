@@ -10,3 +10,10 @@ export function joinRoom(roomCode: string, nickname: string) {
     nickname,
   });
 }
+
+export function selectAvatar(roomCode: string, avatar: number) {
+  socket.emit("select-avatar", {
+    code: roomCode,
+    avatar,
+  });
+}
