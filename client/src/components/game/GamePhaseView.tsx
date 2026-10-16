@@ -2,7 +2,6 @@
 
 import { useGameStore } from "@/store/useGameStore";
 import type { GamePhase } from "@secret-hitler/shared";
-import { StartGameButton } from "../room/StartGameButton";
 import { ChancellorEnact } from "./ChancellorEnact";
 import { ChancellorSelection } from "./ChancellorSelection";
 import { ExecutiveAction } from "./ExecutiveAction";
@@ -15,10 +14,8 @@ interface GamePhaseViewProps {
   roomCode: string;
 }
 
-function renderPhase(phase: GamePhase, roomCode: string) {
+function renderPhase(phase: GamePhase) {
   switch (phase) {
-    case "lobby":
-      return <StartGameButton roomCode={roomCode} />;
     case "roleAssignment":
       return <RoleReveal />;
     case "chancellorSelection":
@@ -40,12 +37,14 @@ function renderPhase(phase: GamePhase, roomCode: string) {
 
 export function GamePhaseView(props: GamePhaseViewProps) {
   const { roomCode } = props;
-  const game = useGameStore((s) => s.game);
+  const game = useGameStore((state) => state.game);
   const phase = game?.phase ?? "lobby";
 
+  if (phase === "lobby") return null;
+
   return (
-    <div key={phase} className="animate-stamp-in">
-      {renderPhase(phase, roomCode)}
+    <div key={`${phase}-${roomCode}`} className="animate-rise">
+      {renderPhase(phase)}
     </div>
   );
 }
