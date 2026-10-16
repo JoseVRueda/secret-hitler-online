@@ -1,49 +1,58 @@
+"use client";
+
+import policyFascist from "@/assets/cards/policy-fascist.png";
+import policyLiberal from "@/assets/cards/policy-liberal.png";
+import { cn } from "@/lib/cn";
 import type { Policy } from "@secret-hitler/shared";
-import Stamp from "./Stamp";
+import Image from "next/image";
+
+const policyImages = {
+  liberal: policyLiberal,
+  fascist: policyFascist,
+} as const;
+
+const policyLabels: Record<Policy, string> = {
+  liberal: "Política liberal",
+  fascist: "Política fascista",
+};
 
 interface PolicyCardProps {
   policy: Policy;
-  faceDown?: boolean;
+  onSelect?: (policy: Policy) => void;
+  actionLabel?: string;
   className?: string;
 }
 
-const policyLabels: Record<Policy, string> = {
-  liberal: "Liberal",
-  fascist: "Fascista",
-};
-
-const policyFaceClasses: Record<Policy, string> = {
-  liberal: "border-liberal bg-liberal/15 text-liberal",
-  fascist: "border-fascist bg-fascist/15 text-fascist",
-};
-
 export default function PolicyCard(props: PolicyCardProps) {
-  const { policy, faceDown = false, className } = props;
+  const { policy, onSelect, actionLabel, className } = props;
 
-  const classes = [
-    "deco-frame paper flex h-36 w-24 sm:h-44 sm:w-28 shrink-0 flex-col items-center justify-center gap-3",
-    "rounded-sm border-4 shadow-lg [backface-visibility:hidden]",
-    faceDown ? "animate-flip border-ink bg-ink text-parchment" : "animate-flip",
-    !faceDown && policyFaceClasses[policy],
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const image = (
+    <Image
+      src={policyImages[policy]}
+      alt={onSelect ? "" : policyLabels[policy]}
+      className="h-auto w-28 sm:w-36"
+    />
+  );
+
+  if (!onSelect) {
+    return <div className={className}>{image}</div>;
+  }
 
   return (
-    <div className={classes}>
-      {faceDown ? (
-        <Stamp color="gold">Secreto</Stamp>
-      ) : (
-        <>
-          <span className="font-poster text-xs uppercase tracking-[0.2em] opacity-70">
-            Política
-          </span>
-          <span className="font-poster text-lg sm:text-xl uppercase tracking-wide">
-            {policyLabels[policy]}
-          </span>
-        </>
+    <button
+      type="button"
+      onClick={() => onSelect(policy)}
+      aria-label={`${actionLabel ?? "Elegir"} ${policyLabels[policy]}`}
+      className={cn("group flex flex-col items-center gap-2", className)}
+    >
+      <span className="transition-transform duration-150 group-hover:-translate-y-2 group-active:translate-y-0">
+        {image}
+      </span>
+      {actionLabel && (
+        <span className="font-body text-xs font-bold tracking-[0.16em] text-highlight uppercase">
+          {actionLabel}
+        </span>
       )}
-    </div>
+    </button>
   );
 }

@@ -1,8 +1,10 @@
+import { cn } from "@/lib/cn";
+
 interface ButtonProps {
   children: React.ReactNode;
   onClick: () => void;
   className?: string;
-  color?: "primary" | "secondary";
+  color?: "fascist" | "liberal";
   variant?: "contained" | "outlined";
   disabled?: boolean;
 }
@@ -11,17 +13,17 @@ const colorVariantClasses: Record<
   NonNullable<ButtonProps["color"]>,
   Record<NonNullable<ButtonProps["variant"]>, string>
 > = {
-  primary: {
+  fascist: {
     contained:
-      "border-ink bg-parchment text-ink shadow-[3px_3px_0_0_var(--color-ink)] hover:bg-parchment-dark",
+      "bg-fascist text-white shadow-[0_4px_0_0_var(--color-fascist-shadow)] hover:bg-fascist-hover",
     outlined:
-      "border-parchment bg-transparent text-parchment shadow-[3px_3px_0_0_var(--color-parchment)] hover:bg-parchment/10",
+      "border-2 border-fascist bg-transparent text-fascist shadow-none hover:bg-fascist/15",
   },
-  secondary: {
+  liberal: {
     contained:
-      "border-ink bg-blood text-parchment shadow-[3px_3px_0_0_var(--color-ink)] hover:bg-blood-bright",
+      "bg-liberal text-white shadow-[0_4px_0_0_var(--color-liberal-shadow)] hover:bg-liberal-hover",
     outlined:
-      "border-blood-bright bg-transparent text-blood-bright shadow-[3px_3px_0_0_var(--color-blood-bright)] hover:bg-blood/10",
+      "border-2 border-liberal bg-transparent text-liberal shadow-none hover:bg-liberal/15",
   },
 };
 
@@ -30,25 +32,26 @@ export default function Button(props: ButtonProps) {
     children,
     onClick,
     className,
-    color = "primary",
+    color = "fascist",
     variant = "contained",
     disabled = false,
   } = props;
 
-  const classes = [
-    "inline-flex items-center justify-center gap-2 border-2 px-5 py-2.5",
-    "font-stamp text-sm uppercase tracking-[0.15em]",
-    "transition-all duration-150 ease-out",
-    "active:translate-x-[2px] active:translate-y-[2px] active:shadow-none",
-    "disabled:pointer-events-none disabled:translate-x-0 disabled:translate-y-0 disabled:opacity-40 disabled:shadow-none",
-    colorVariantClasses[color][variant],
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   return (
-    <button className={classes} onClick={onClick} disabled={disabled}>
+    <button
+      type="button"
+      className={cn(
+        "inline-flex items-center justify-center gap-2 rounded-sm px-5 py-2.5",
+        "font-body text-sm font-bold uppercase tracking-[0.14em]",
+        "transition-all duration-150 ease-out",
+        "active:translate-y-1 active:shadow-none",
+        "disabled:pointer-events-none disabled:translate-y-0 disabled:border-transparent disabled:bg-disabled disabled:text-white/80 disabled:shadow-[0_4px_0_0_var(--color-disabled-shadow)]",
+        colorVariantClasses[color][variant],
+        className,
+      )}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {children}
     </button>
   );

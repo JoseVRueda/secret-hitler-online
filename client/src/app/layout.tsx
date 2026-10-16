@@ -1,32 +1,26 @@
 import type { Metadata } from "next";
-import { Old_Standard_TT, Oswald, Special_Elite } from "next/font/google";
+import { Germania_One, Montserrat } from "next/font/google";
 import { SocketProvider } from "@/providers/SocketProvider";
 import "./globals.css";
 
-const oswald = Oswald({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-oswald",
-  display: "swap",
-});
-
-const specialElite = Special_Elite({
+const germania = Germania_One({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-special-elite",
+  variable: "--font-germania",
   display: "swap",
 });
 
-const oldStandardTT = Old_Standard_TT({
+const montserrat = Montserrat({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-old-standard",
+  weight: ["500", "700"],
+  variable: "--font-montserrat",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Secret Hitler",
-  description: "Juego de mesa social de intriga y engaño ambientado en la Alemania de entreguerras.",
+  description:
+    "Juego de mesa social de intriga y engaño ambientado en la Alemania de entreguerras.",
 };
 
 export default function RootLayout({
@@ -35,12 +29,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="es"
-      className={`${oswald.variable} ${specialElite.variable} ${oldStandardTT.variable}`}
-    >
-      <SocketProvider />
-      <body className="paper grain vignette font-body antialiased">{children}</body>
+    <html lang="es" className={`${germania.variable} ${montserrat.variable}`}>
+      <body className="font-body antialiased">
+        <SocketProvider />
+        {children}
+      </body>
     </html>
   );
 }
