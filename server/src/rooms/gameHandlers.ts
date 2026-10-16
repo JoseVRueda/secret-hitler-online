@@ -1,8 +1,8 @@
-import { isVetoUnlocked } from "@/game/board.js";
-import { emitGameState } from "@/game/emitGameState.js";
-import { emitPrivateGameViews } from "@/game/emitPrivateGameViews.js";
-import { getGame } from "@/game/gameService.js";
-import { assignRoles } from "@/game/assignRoles.js";
+import { assignRoles } from "../game/assignRoles.js";
+import { isVetoUnlocked } from "../game/board.js";
+import { emitGameState } from "../game/emitGameState.js";
+import { emitPrivateGameViews } from "../game/emitPrivateGameViews.js";
+import { getGame } from "../game/gameService.js";
 import type {
   AcknowledgePeekPayload,
   AcknowledgeRolePayload,

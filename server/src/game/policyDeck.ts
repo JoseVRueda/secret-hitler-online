@@ -1,5 +1,5 @@
 import type { Policy } from "@secret-hitler/shared";
-import { shuffleArray } from "@/utils/shuffleArray.js";
+import { shuffleArray } from "../utils/shuffleArray.js";
 
 const LIBERAL_POLICY_COUNT = 6;
 const FASCIST_POLICY_COUNT = 11;

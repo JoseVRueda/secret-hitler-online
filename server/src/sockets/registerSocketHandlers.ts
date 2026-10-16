@@ -9,12 +9,12 @@ import {
   handleRequestVeto,
   handleSelectChancellor,
   handleStartGame,
-} from "@/rooms/gameHandlers.js";
+} from "../rooms/gameHandlers.js";
 import {
   handleCreateRoom,
   handleJoinRoom,
   handleSelectAvatar,
-} from "@/rooms/roomHandlers.js";
+} from "../rooms/roomHandlers.js";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,

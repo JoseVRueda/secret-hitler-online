@@ -1,5 +1,5 @@
-import { createGame, getGame } from "@/game/gameService.js";
-import { generateRoomCode } from "@/utils/generateRoomCode.js";
+import { createGame, getGame } from "../game/gameService.js";
+import { generateRoomCode } from "../utils/generateRoomCode.js";
 import {
   AVATAR_COUNT,
   type ClientToServerEvents,

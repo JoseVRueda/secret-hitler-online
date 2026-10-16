@@ -1,5 +1,5 @@
-import { roleDistributions } from "@/data/roleDistributions.js";
-import { shuffleArray } from "@/utils/shuffleArray.js";
+import { roleDistributions } from "../data/roleDistributions.js";
+import { shuffleArray } from "../utils/shuffleArray.js";
 import type { Player, PlayerRole } from "@secret-hitler/shared";
 
 function getRoleDistribution(playerCount: number): PlayerRole[] {
